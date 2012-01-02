@@ -42,7 +42,7 @@ public class DoE extends BasicGame
             e.printStackTrace();
         }
     }
-
+    
     @Override
     public void init(GameContainer container) throws SlickException
     {
