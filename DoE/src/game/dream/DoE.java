@@ -4,6 +4,11 @@
 */ 
 package game.dream;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -13,6 +18,9 @@ import org.newdawn.slick.tiled.*;
 import org.newdawn.slick.Image; 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Input;
+import de.matthiasmann.twl.*;
+import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
+import de.matthiasmann.twl.theme.ThemeManager;
 
 public class DoE extends BasicGame
 {
@@ -23,6 +31,11 @@ public class DoE extends BasicGame
 	private static final int tileSize = 32;
 	private static final int screenHeight = 400;
 	private static final int screenWidth = 500;
+	private TWLInputAdapter twlInputAdapter;
+    private LWJGLRenderer lwjglRenderer;
+    private ThemeManager theme;
+    private GUI gui;
+    private Widget root;
 	
     public DoE()
     {
@@ -53,8 +66,6 @@ public class DoE extends BasicGame
     	Image [] movementLeft = {new Image("data/knt1_lf1.gif"), new Image("data/knt1_lf2.gif")};
     	Image [] movementRight = {new Image("data/knt1_rt1.gif"), new Image("data/knt1_rt2.gif")};
     	int [] duration = {300, 300};
-    	int screenWidth;
-    	int screenHight;
     	
     	up = new Animation(movementUp, duration, false);
     	down = new Animation(movementDown, duration, false);
@@ -76,11 +87,37 @@ public class DoE extends BasicGame
 	             }
 	         }
     	 }
+    	
+    	 // construct & configure root widget
+        root = new Widget();
+        root.setTheme("");
+
+        // save Slick's GL state while loading the theme
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        try {
+            lwjglRenderer = new LWJGLRenderer();
+            theme = ThemeManager.createThemeManager(
+            		Thread.currentThread().getContextClassLoader().getResource("./GUI/simple.xml"), lwjglRenderer);
+            gui = new GUI(root, lwjglRenderer);
+            gui.applyTheme(theme);
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        } catch(IOException e){
+            e.printStackTrace();
+        } finally {
+            // restore Slick's GL state
+            GL11.glPopAttrib();
+        }
+
+        // connect input
+        twlInputAdapter = new TWLInputAdapter(gui, container.getInput());
+        container.getInput().addPrimaryListener(twlInputAdapter);
     }
 
     @Override
     public void update(GameContainer container, int delta) throws SlickException
     {
+    	twlInputAdapter.update();
     	Input input = container.getInput();
     	if (input.isKeyDown(Input.KEY_UP))
     	{
