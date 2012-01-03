@@ -4,7 +4,6 @@
 */ 
 package game.dream;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.lwjgl.LWJGLException;
@@ -96,7 +95,7 @@ public class DoE extends BasicGame
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         try {
             lwjglRenderer = new LWJGLRenderer();
-            theme = ThemeManager.createThemeManager(this.getClass().getResource("/gui/simple.xml"), lwjglRenderer);
+            theme = ThemeManager.createThemeManager(this.getClass().getResource("simple.xml"), lwjglRenderer);
             gui = new GUI(root, lwjglRenderer);
             gui.applyTheme(theme);
         } catch (LWJGLException e) {
