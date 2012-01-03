@@ -96,8 +96,7 @@ public class DoE extends BasicGame
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         try {
             lwjglRenderer = new LWJGLRenderer();
-            theme = ThemeManager.createThemeManager(
-            		Thread.currentThread().getContextClassLoader().getResource("./GUI/simple.xml"), lwjglRenderer);
+            theme = ThemeManager.createThemeManager(this.getClass().getResource("/gui/simple.xml"), lwjglRenderer);
             gui = new GUI(root, lwjglRenderer);
             gui.applyTheme(theme);
         } catch (LWJGLException e) {
