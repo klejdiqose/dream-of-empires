@@ -20,6 +20,7 @@ import org.newdawn.slick.Input;
 import de.matthiasmann.twl.*;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
+import de.matthiasmann.twl.Widget;
 
 public class DoE extends BasicGame
 {
@@ -38,7 +39,7 @@ public class DoE extends BasicGame
 	
     public DoE()
     {
-        super("Test game");
+        super("Dream of Empires");
     }
 
     public static void main(String[] arguments)
@@ -48,6 +49,7 @@ public class DoE extends BasicGame
             AppGameContainer app = new AppGameContainer(new DoE());
             app.setDisplayMode(screenWidth, screenHeight, false);
             app.start();
+            
         }
         catch (SlickException e)
         {
@@ -90,6 +92,9 @@ public class DoE extends BasicGame
     	 // construct & configure root widget
         root = new Widget();
         root.setTheme("");
+    	
+
+
 
         // save Slick's GL state while loading the theme
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -154,6 +159,14 @@ public class DoE extends BasicGame
 	    	    x += delta * 0.1f;
     		}
     	}
+    	
+    	if (input.isKeyDown(Input.KEY_M))
+    	{
+    		SimpleGameMenu menu = new SimpleGameMenu();
+    		root.add(menu);
+    	}
+    	
+    	twlInputAdapter.update();
     }
 
     public void render(GameContainer container, Graphics g) throws SlickException
@@ -166,6 +179,8 @@ public class DoE extends BasicGame
     	int middleY = screenHeight / 2;
     	currentMap.render(middleX - (int)x + 16 , middleY - (int)y + tileSize);
     	sprite.draw(middleX, middleY);
+    	
+    	twlInputAdapter.render();
     }
     
     private boolean isBlocked(float x, float y)
@@ -179,4 +194,7 @@ public class DoE extends BasicGame
          int yBlock = (int)y / tileSize;
          return blocked[xBlock][yBlock];
     }
+
+    
+    
 }
