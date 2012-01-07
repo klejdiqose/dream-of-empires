@@ -54,15 +54,15 @@ public class GameMenu extends Widget {
         
         buttons[0].addCallback(new Runnable() {
             public void run() {
-            	buttons[0].setText("Told ya!");
-            	buttons[0].setEnabled(false);
-            	
-
+            	// set the GUI back to normal
+            	DoE.gui.setRootPane(DoE.root);
             }
         });        
         
         buttons[1] = new Button("Options");
         buttons[2] = new Button("Quit");
+        
+        
 
         for(int i=0 ; i<buttons.length ; i++) {
             add(buttons[i]);
@@ -94,6 +94,7 @@ public class GameMenu extends Widget {
             case KEY_PRESSED:
                 switch (evt.getKeyCode()) {
                     case Event.KEY_ESCAPE:
+                    	
                         quit = true;
                         return true;
 

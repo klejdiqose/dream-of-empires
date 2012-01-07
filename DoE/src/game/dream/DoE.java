@@ -34,9 +34,9 @@ public class DoE extends BasicGame
 	private TWLInputAdapter twlInputAdapter;
     private LWJGLRenderer lwjglRenderer;
     private ThemeManager theme;
-    private GUI gui;
-    private Widget root;
-    private GameMenu gameMenu;
+    public static GUI gui;
+    public static Widget root;
+    public static GameMenu gameMenu;
     public static DoE mainGame;
 	
     public DoE()
