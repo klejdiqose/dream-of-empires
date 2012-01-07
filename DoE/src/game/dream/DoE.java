@@ -36,6 +36,8 @@ public class DoE extends BasicGame
     private ThemeManager theme;
     private GUI gui;
     private Widget root;
+    private GameMenu gameMenu;
+    public static DoE mainGame;
 	
     public DoE()
     {
@@ -46,7 +48,8 @@ public class DoE extends BasicGame
     {
         try
         {
-            AppGameContainer app = new AppGameContainer(new DoE());
+        	mainGame = new DoE();
+            AppGameContainer app = new AppGameContainer(mainGame);
             app.setDisplayMode(screenWidth, screenHeight, false);
             app.start();
             
@@ -91,9 +94,13 @@ public class DoE extends BasicGame
     	
     	 // construct & configure root widget
         root = new Widget();
+        root.setSize(screenWidth, screenHeight);
         root.setTheme("");
-    	
 
+        // create the popup menu
+		gameMenu = new GameMenu();
+		gameMenu.setTheme("");
+		gameMenu.setPosition(screenWidth/2, screenHeight/2);
 
 
         // save Slick's GL state while loading the theme
@@ -160,10 +167,10 @@ public class DoE extends BasicGame
     		}
     	}
     	
-    	if (input.isKeyDown(Input.KEY_M))
+    	if (input.isKeyDown(Input.KEY_ESCAPE))
     	{
-    		SimpleGameMenu menu = new SimpleGameMenu();
-    		root.add(menu);
+    		// Switch to the game menu
+    		gui.setRootPane(gameMenu);    		
     	}
     	
     	twlInputAdapter.update();
@@ -171,10 +178,6 @@ public class DoE extends BasicGame
 
     public void render(GameContainer container, Graphics g) throws SlickException
     {
-    	/*
-    	currentMap.render(0, 0);
-    	sprite.draw((int)x, (int)y);
-    	*/
     	int middleX = screenWidth / 2;
     	int middleY = screenHeight / 2;
     	currentMap.render(middleX - (int)x + 16 , middleY - (int)y + tileSize);
