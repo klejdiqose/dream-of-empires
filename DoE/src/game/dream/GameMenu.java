@@ -61,6 +61,12 @@ public class GameMenu extends Widget {
         
         buttons[1] = new Button("Options");
         buttons[2] = new Button("Quit");
+        buttons[2].addCallback(new Runnable() {
+            public void run() {
+                // quit game
+                System.exit(0);
+            }
+        });  
         
         
 

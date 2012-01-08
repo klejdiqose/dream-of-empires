@@ -26,11 +26,11 @@ public class DoE extends BasicGame
 {
 	private TiledMap currentMap;
 	private Animation sprite, up, down, left, right;
-	private float x = 38f, y = 38f;
+	private float playerX = 0f, playerY = 0f;
 	private boolean[][] blocked;
 	private static final int tileSize = 32;
-	private static final int screenHeight = 400;
-	private static final int screenWidth = 500;
+	private static final int screenHeight = 600;
+	private static final int screenWidth = 800;
 	private TWLInputAdapter twlInputAdapter;
     private LWJGLRenderer lwjglRenderer;
     private ThemeManager theme;
@@ -38,6 +38,7 @@ public class DoE extends BasicGame
     public static Widget root;
     public static GameMenu gameMenu;
     public static DoE mainGame;
+    public boolean buildMode = false;
 	
     public DoE()
     {
@@ -77,20 +78,9 @@ public class DoE extends BasicGame
     	right = new Animation(movementRight, duration, false); 
     	
     	sprite = down;
+    	calculateBlocked();
     	
-    	blocked = new boolean[currentMap.getWidth()][currentMap.getHeight()];
-    	for (int xAxis=0;xAxis<currentMap.getWidth(); xAxis++)
-    	{
-	         for (int yAxis=0;yAxis<currentMap.getHeight(); yAxis++)
-	         {
-	             int tileID = currentMap.getTileId(xAxis, yAxis, 0);
-	             String value = currentMap.getTileProperty(tileID, "blocked", "false");
-	             if ("true".equals(value))
-	             {
-	                 blocked[xAxis][yAxis] = true;
-	             }
-	         }
-    	 }
+
     	
     	 // construct & configure root widget
         root = new Widget();
@@ -129,41 +119,41 @@ public class DoE extends BasicGame
     {
     	twlInputAdapter.update();
     	Input input = container.getInput();
-    	if (input.isKeyDown(Input.KEY_UP))
+    	if (input.isKeyDown(Input.KEY_UP) ||input.isKeyDown(Input.KEY_W))
     	{
-    		if (!isBlocked(x, y - delta * 0.1f))
+    		if (!isBlocked(playerX, playerY - delta * 0.1f))
     		{
 	    	    sprite = up;
 	    	    sprite.update(delta);
 	    	    // The lower the delta the slowest the sprite will animate.
-	    	    y -= delta * 0.1f;
+	    	    playerY -= delta * 0.1f;
     		}
     	}
-    	else if (input.isKeyDown(Input.KEY_DOWN))
+    	else if (input.isKeyDown(Input.KEY_DOWN) ||input.isKeyDown(Input.KEY_S))
     	{
-    		if (!isBlocked(x, y + delta * 0.1f))
+    		if (!isBlocked(playerX, playerY + delta * 0.1f))
     		{
 	    	    sprite = down;
 	    	    sprite.update(delta);
-	    	    y += delta * 0.1f;
+	    	    playerY += delta * 0.1f;
     		}
     	}
-    	else if (input.isKeyDown(Input.KEY_LEFT))
+    	else if (input.isKeyDown(Input.KEY_LEFT) ||input.isKeyDown(Input.KEY_A))
     	{
-    		if (!isBlocked(x  - delta * 0.1f, y))
+    		if (!isBlocked(playerX  - delta * 0.1f, playerY))
     		{
 	    	    sprite = left;
 	    	    sprite.update(delta);
-	    	    x -= delta * 0.1f;
+	    	    playerX -= delta * 0.1f;
     		}
     	}
-    	else if (input.isKeyDown(Input.KEY_RIGHT))
+    	else if (input.isKeyDown(Input.KEY_RIGHT) ||input.isKeyDown(Input.KEY_D))
     	{
-    		if (!isBlocked(x  + delta * 0.1f, y))
+    		if (!isBlocked(playerX  + delta * 0.1f, playerY))
     		{
 	    	    sprite = right;
 	    	    sprite.update(delta);
-	    	    x += delta * 0.1f;
+	    	    playerX += delta * 0.1f;
     		}
     	}
     	
@@ -173,6 +163,22 @@ public class DoE extends BasicGame
     		gui.setRootPane(gameMenu);    		
     	}
     	
+    	if (input.isKeyDown(Input.KEY_B))
+    	{
+    		buildMode = !buildMode;
+    	}
+    	if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
+    	{
+	    	if (buildMode)
+	    	{
+        	  int middleX = screenWidth / 2;
+          	  int middleY = screenHeight / 2;
+	    	  int tileX = getTilePosition(-middleX + input.getMouseX() + playerX);
+	    	  int tileY = getTilePosition(-middleY + input.getMouseY() + playerY) - 1;
+	    		currentMap.setTileId (tileX,tileY,0,32);
+	    		calculateBlocked();
+	    	}
+    	}
     	twlInputAdapter.update();
     }
 
@@ -180,10 +186,26 @@ public class DoE extends BasicGame
     {
     	int middleX = screenWidth / 2;
     	int middleY = screenHeight / 2;
-    	currentMap.render(middleX - (int)x + 16 , middleY - (int)y + tileSize);
+    	currentMap.render(middleX - (int)playerX + 16 , middleY - (int)playerY + tileSize);
     	sprite.draw(middleX, middleY);
     	
     	twlInputAdapter.render();
+    	
+    	if (buildMode)
+    	{
+    	  Input input = container.getInput();	
+    	  int tileX = getTilePosition(-middleX + input.getMouseX() + playerX);
+    	  int tileY = getTilePosition(-middleY + input.getMouseY() + playerY) - 1;
+    	  int mouseX = tileX * tileSize - (int)playerX + middleX + tileSize / 2; 
+    	  int mouseY = tileY * tileSize - (int)playerY + middleY + tileSize; 
+    	  
+    	  System.out.println(tileX);
+    	  Image tile = currentMap.getTileSet(0).tiles.getSubImage(7,3);
+    	  tile.setAlpha(.5f);
+    	  tile.draw(mouseX,mouseY);
+    	  
+
+    	}
     }
     
     private boolean isBlocked(float x, float y)
@@ -197,7 +219,29 @@ public class DoE extends BasicGame
          int yBlock = (int)y / tileSize;
          return blocked[xBlock][yBlock];
     }
+    
+    private int getTilePosition(float x)
+    {
+    	return (int)x / tileSize;
+    }
 
+
+    private void calculateBlocked()
+    {
+    	blocked = new boolean[currentMap.getWidth()][currentMap.getHeight()];
+    	for (int xAxis=0;xAxis<currentMap.getWidth(); xAxis++)
+    	{
+	         for (int yAxis=0;yAxis<currentMap.getHeight(); yAxis++)
+	         {
+	             int tileID = currentMap.getTileId(xAxis, yAxis, 0);
+	             String value = currentMap.getTileProperty(tileID, "blocked", "false");
+	             if ("true".equals(value))
+	             {
+	                 blocked[xAxis][yAxis] = true;
+	             }
+	         }
+    	 }
+    }
     
     
 }
