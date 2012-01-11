@@ -13,6 +13,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.tiled.*;
 import org.newdawn.slick.Image; 
 import org.newdawn.slick.Animation;
@@ -21,12 +22,13 @@ import de.matthiasmann.twl.*;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
 import de.matthiasmann.twl.Widget;
+import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.gui.MouseOverArea;
 
 public class DoE extends BasicGame
 {
 	private TiledMap currentMap;
 	private Animation sprite, up, down, left, right;
-	private float playerX = 0f, playerY = 0f;
 	private boolean[][] blocked;
 	private static final int tileSize = 32;
 	private static final int screenHeight = 600;
@@ -39,7 +41,9 @@ public class DoE extends BasicGame
     public static GameMenu gameMenu;
     public static DoE mainGame;
     public boolean buildMode = false;
-	
+    public Vector2f playerPosition = new Vector2f(0f, 0f);
+    private MouseOverArea[] buildButton = new MouseOverArea[2];
+    
     public DoE()
     {
         super("Dream of Empires");
@@ -64,6 +68,8 @@ public class DoE extends BasicGame
     @Override
     public void init(GameContainer container) throws SlickException
     {
+
+        
     	currentMap = new TiledMap("data/desert.tmx");
     	
     	Image [] movementUp = {new Image("data/knt1_bk1.gif"), new Image("data/knt1_bk2.gif")};
@@ -80,7 +86,25 @@ public class DoE extends BasicGame
     	sprite = down;
     	calculateBlocked();
     	
-
+    	  // add build buttons
+        for (int i=0;i<2;i++) {
+            Image tile = null;
+             
+            switch(i)
+            {
+            case 0:
+                tile = currentMap.getTileSet(0).tiles.getSubImage(7,3);
+                break;
+            case 1:
+                tile = currentMap.getTileSet(0).tiles.getSubImage(2,3);
+                break;               
+            }
+           
+            buildButton[i] = new MouseOverArea(container, tile, 0, (i*tileSize), tileSize, tileSize);
+            
+            Sound click = new Sound("/data/click.wav");
+            buildButton[i].setMouseDownSound(click);
+        }
     	
     	 // construct & configure root widget
         root = new Widget();
@@ -112,6 +136,7 @@ public class DoE extends BasicGame
         // connect input
         twlInputAdapter = new TWLInputAdapter(gui, container.getInput());
         container.getInput().addPrimaryListener(twlInputAdapter);
+        
     }
 
     @Override
@@ -121,49 +146,49 @@ public class DoE extends BasicGame
     	Input input = container.getInput();
     	if (input.isKeyDown(Input.KEY_UP) ||input.isKeyDown(Input.KEY_W))
     	{
-    		if (!isBlocked(playerX, playerY - delta * 0.1f))
+    		if (!isBlocked(playerPosition.x, playerPosition.y - delta * 0.1f))
     		{
 	    	    sprite = up;
 	    	    sprite.update(delta);
 	    	    // The lower the delta the slowest the sprite will animate.
-	    	    playerY -= delta * 0.1f;
+	    	    playerPosition.y -= delta * 0.1f;
     		}
     	}
     	else if (input.isKeyDown(Input.KEY_DOWN) ||input.isKeyDown(Input.KEY_S))
     	{
-    		if (!isBlocked(playerX, playerY + delta * 0.1f))
+    		if (!isBlocked(playerPosition.x, playerPosition.y + delta * 0.1f))
     		{
 	    	    sprite = down;
 	    	    sprite.update(delta);
-	    	    playerY += delta * 0.1f;
+	    	    playerPosition.y += delta * 0.1f;
     		}
     	}
     	else if (input.isKeyDown(Input.KEY_LEFT) ||input.isKeyDown(Input.KEY_A))
     	{
-    		if (!isBlocked(playerX  - delta * 0.1f, playerY))
+    		if (!isBlocked(playerPosition.x  - delta * 0.1f, playerPosition.y))
     		{
 	    	    sprite = left;
 	    	    sprite.update(delta);
-	    	    playerX -= delta * 0.1f;
+	    	    playerPosition.x -= delta * 0.1f;
     		}
     	}
     	else if (input.isKeyDown(Input.KEY_RIGHT) ||input.isKeyDown(Input.KEY_D))
     	{
-    		if (!isBlocked(playerX  + delta * 0.1f, playerY))
+    		if (!isBlocked(playerPosition.x  + delta * 0.1f, playerPosition.y))
     		{
 	    	    sprite = right;
 	    	    sprite.update(delta);
-	    	    playerX += delta * 0.1f;
+	    	    playerPosition.x += delta * 0.1f;
     		}
     	}
     	
-    	if (input.isKeyDown(Input.KEY_ESCAPE))
+    	if (input.isKeyPressed(Input.KEY_ESCAPE))
     	{
     		// Switch to the game menu
     		gui.setRootPane(gameMenu);    		
     	}
     	
-    	if (input.isKeyDown(Input.KEY_B))
+    	if (input.isKeyPressed(Input.KEY_B))
     	{
     		buildMode = !buildMode;
     	}
@@ -173,8 +198,8 @@ public class DoE extends BasicGame
 	    	{
         	  int middleX = screenWidth / 2;
           	  int middleY = screenHeight / 2;
-	    	  int tileX = getTilePosition(-middleX + input.getMouseX() + playerX);
-	    	  int tileY = getTilePosition(-middleY + input.getMouseY() + playerY) - 1;
+	    	  int tileX = getTilePosition(-middleX + input.getMouseX() + playerPosition.x);
+	    	  int tileY = getTilePosition(-middleY + input.getMouseY() + playerPosition.y) - 1;
 	    		currentMap.setTileId (tileX,tileY,0,32);
 	    		calculateBlocked();
 	    	}
@@ -186,7 +211,7 @@ public class DoE extends BasicGame
     {
     	int middleX = screenWidth / 2;
     	int middleY = screenHeight / 2;
-    	currentMap.render(middleX - (int)playerX + 16 , middleY - (int)playerY + tileSize);
+    	currentMap.render(middleX - (int)playerPosition.x + 16 , middleY - (int)playerPosition.y + tileSize);
     	sprite.draw(middleX, middleY);
     	
     	twlInputAdapter.render();
@@ -194,16 +219,21 @@ public class DoE extends BasicGame
     	if (buildMode)
     	{
     	  Input input = container.getInput();	
-    	  int tileX = getTilePosition(-middleX + input.getMouseX() + playerX);
-    	  int tileY = getTilePosition(-middleY + input.getMouseY() + playerY) - 1;
-    	  int mouseX = tileX * tileSize - (int)playerX + middleX + tileSize / 2; 
-    	  int mouseY = tileY * tileSize - (int)playerY + middleY + tileSize; 
+    	  int tileX = getTilePosition(-middleX + input.getMouseX() + playerPosition.x);
+    	  int tileY = getTilePosition(-middleY + input.getMouseY() + playerPosition.y) - 1;
+    	  int mouseX = tileX * tileSize - (int)playerPosition.x + middleX + tileSize / 2; 
+    	  int mouseY = tileY * tileSize - (int)playerPosition.y + middleY + tileSize; 
     	  
     	  System.out.println(tileX);
     	  Image tile = currentMap.getTileSet(0).tiles.getSubImage(7,3);
     	  tile.setAlpha(.5f);
     	  tile.draw(mouseX,mouseY);
     	  
+    	  // render build buttons
+          for (int i=0;i<2;i++)
+          {
+            buildButton[i].render(container, g);         
+          }
 
     	}
     }
@@ -241,6 +271,7 @@ public class DoE extends BasicGame
 	             }
 	         }
     	 }
+    	
     }
     
     
