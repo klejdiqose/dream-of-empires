@@ -24,6 +24,9 @@ import de.matthiasmann.twl.theme.ThemeManager;
 import de.matthiasmann.twl.Widget;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.gui.MouseOverArea;
+import org.newdawn.slick.gui.AbstractComponent;
+import org.newdawn.slick.gui.ComponentListener;
+
 
 public class DoE extends BasicGame
 {
@@ -100,7 +103,12 @@ public class DoE extends BasicGame
                 break;               
             }
            
-            buildButton[i] = new MouseOverArea(container, tile, 0, (i*tileSize), tileSize, tileSize);
+            buildButton[i] = new MouseOverArea(container, tile, 0, (i*tileSize), tileSize, tileSize, new ComponentListener() {
+                public void componentActivated(AbstractComponent source) {
+                    System.out.println("clicked");
+                }
+            });
+				
             
             Sound click = new Sound("/data/click.wav");
             buildButton[i].setMouseDownSound(click);
@@ -224,7 +232,6 @@ public class DoE extends BasicGame
     	  int mouseX = tileX * tileSize - (int)playerPosition.x + middleX + tileSize / 2; 
     	  int mouseY = tileY * tileSize - (int)playerPosition.y + middleY + tileSize; 
     	  
-    	  System.out.println(tileX);
     	  Image tile = currentMap.getTileSet(0).tiles.getSubImage(7,3);
     	  tile.setAlpha(.5f);
     	  tile.draw(mouseX,mouseY);
