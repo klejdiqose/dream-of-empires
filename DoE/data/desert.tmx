@@ -20,7 +20,7 @@
  </tileset>
  <layer name="Ground" width="40" height="40">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+2Y2Q6CMBBFR31wS1wT14h1xxX+/+scAw1m0hhaSjsqDyfQpKGH24UJAQAEJdJD+sig5HFMeCj81obPEn+Y3yurCTJFZgx8VNSQOtIg3jbHkHM/RxYaLJE20kG6DrLYIFsNdpb9xNt9yNCPe34qjgz8BGnHxEv28Z0fXXO07cNPtQ9Ckp+895XfibSlD4f8PnlSzshFg6sFv2ZKC7JvkU1WBf36kNUX8l3LwNRvCll9MURGJTE29Mu79nygqnOKegqLfsJhbia1mQuvR3rNc3buITmXDpCcnS7XUh6/l1Oc9nXpFzH0o+uam5/J/N4g2Rt3h36Rhh/Nklt+qrnm7OcyP5PazKXfryAYOHwLNCvb/42qOa6o8MsTeL6fhQAZAAA=
+   H4sIAAAAAAAAC+3ONQ7DABTA0JSZmZIy0/1PVw89Q/UreXiLJ6dJkqR/Ioc8CiiihDIqqAb4q6GOBppooY0OugH+euhjgCFGGGOCaYC/GeZYYInVt2dYB/jbYIsd9jjgiBPOAf4uuOKGOx544oV3gD9JkiRJkiRJ+qUP2wPe+QAZAAA=
   </data>
  </layer>
 </map>
