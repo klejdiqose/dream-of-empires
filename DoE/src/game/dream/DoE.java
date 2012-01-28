@@ -31,7 +31,6 @@ import org.newdawn.slick.gui.ComponentListener;
 public class DoE extends BasicGame implements ComponentListener
 {
 	private TiledMap currentMap;
-	private Animation sprite, up, down, left, right;
 	private boolean[][] blocked;
 	private static final int tileSize = 32;
 	public static final int screenHeight = 600;
@@ -43,9 +42,7 @@ public class DoE extends BasicGame implements ComponentListener
     public static Widget root;
     public static GameMenu gameMenu;
     public static DoE mainGame;
-    public boolean buildMode = false;
-    public Vector2f playerPosition = new Vector2f(0f, 0f);
-    public Item[] inventory;
+    public static Player player;
     private final int buildButtons = 2;
     private MouseOverArea[] buildButton = new MouseOverArea[buildButtons];
     private int buildItem = 0;
@@ -77,24 +74,11 @@ public class DoE extends BasicGame implements ComponentListener
     @Override
     public void init(GameContainer container) throws SlickException
     {
-    	inventory = new Item[2];
-    	inventory[0] = new Item("Pants", new Image("data/knt1_lf1.gif"));
-    	inventory[1] = new Item("Underpants", new Image("data/knt1_rt1.gif"));    	
-    	dude = new npc(new Vector2f(5f, 5f), mainGame);        
+    	    	
+    	dude = new npc(new Vector2f(5f, 5f));        
+    	player = new Player(new Vector2f(0f, 0f));        
     	currentMap = new TiledMap("data/desert.tmx");
     	
-    	Image [] movementUp = {new Image("data/knt1_bk1.gif"), new Image("data/knt1_bk2.gif")};
-    	Image [] movementDown = {new Image("data/knt1_fr1.gif"), new Image("data/knt1_fr2.gif")};
-    	Image [] movementLeft = {new Image("data/knt1_lf1.gif"), new Image("data/knt1_lf2.gif")};
-    	Image [] movementRight = {new Image("data/knt1_rt1.gif"), new Image("data/knt1_rt2.gif")};
-    	int [] duration = {300, 300};
-    	
-    	up = new Animation(movementUp, duration, false);
-    	down = new Animation(movementDown, duration, false);
-    	left = new Animation(movementLeft, duration, false);
-    	right = new Animation(movementRight, duration, false); 
-    	
-    	sprite = down;
     	calculateBlocked();
     	
     	  // add build buttons
@@ -155,45 +139,9 @@ public class DoE extends BasicGame implements ComponentListener
     public void update(GameContainer container, int delta) throws SlickException
     {
     	dude.update(delta);
+    	player.update(container,delta);
     	twlInputAdapter.update();
     	Input input = container.getInput();
-    	if (input.isKeyDown(Input.KEY_UP) ||input.isKeyDown(Input.KEY_W))
-    	{
-    		if (!isBlocked(playerPosition.x, playerPosition.y - delta * 0.1f))
-    		{
-	    	    sprite = up;
-	    	    sprite.update(delta);
-	    	    // The lower the delta the slowest the sprite will animate.
-	    	    playerPosition.y -= delta * 0.1f;
-    		}
-    	}
-    	else if (input.isKeyDown(Input.KEY_DOWN) ||input.isKeyDown(Input.KEY_S))
-    	{
-    		if (!isBlocked(playerPosition.x, playerPosition.y + delta * 0.1f))
-    		{
-	    	    sprite = down;
-	    	    sprite.update(delta);
-	    	    playerPosition.y += delta * 0.1f;
-    		}
-    	}
-    	else if (input.isKeyDown(Input.KEY_LEFT) ||input.isKeyDown(Input.KEY_A))
-    	{
-    		if (!isBlocked(playerPosition.x  - delta * 0.1f, playerPosition.y))
-    		{
-	    	    sprite = left;
-	    	    sprite.update(delta);
-	    	    playerPosition.x -= delta * 0.1f;
-    		}
-    	}
-    	else if (input.isKeyDown(Input.KEY_RIGHT) ||input.isKeyDown(Input.KEY_D))
-    	{
-    		if (!isBlocked(playerPosition.x  + delta * 0.1f, playerPosition.y))
-    		{
-	    	    sprite = right;
-	    	    sprite.update(delta);
-	    	    playerPosition.x += delta * 0.1f;
-    		}
-    	}
     	
     	if (input.isKeyPressed(Input.KEY_ESCAPE))
     	{
@@ -201,25 +149,15 @@ public class DoE extends BasicGame implements ComponentListener
     		gui.setRootPane(gameMenu);    		
     	}
     	
-    	if (input.isKeyPressed(Input.KEY_B))
-    	{
-    		buildMode = !buildMode;
-    	}
-    	if (input.isKeyPressed(Input.KEY_I))
-    	{
-            for (int i=0;i<inventory.length;i++) {
-            	System.out.println(inventory[i].name);
-            }
-    	}
         if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
         {
             // make sure clicking a button doesn't accidentally put down a building
-            if (buildMode && input.getMouseX() > tileSize)
+            if (player.buildMode && input.getMouseX() > tileSize)
             {
               int middleX = screenWidth / 2;
                 int middleY = screenHeight / 2;
-              int tileX = getTilePosition(-middleX + input.getMouseX() + playerPosition.x);
-              int tileY = getTilePosition(-middleY + input.getMouseY() + playerPosition.y) - 1;
+              int tileX = getTilePosition(-middleX + input.getMouseX() + player.position.x);
+              int tileY = getTilePosition(-middleY + input.getMouseY() + player.position.y) - 1;
               if(!isBlocked(tileX, tileY))
               {
                   switch(buildItem)
@@ -242,19 +180,19 @@ public class DoE extends BasicGame implements ComponentListener
     {
     	int middleX = screenWidth / 2;
     	int middleY = screenHeight / 2;
-    	currentMap.render(middleX - (int)playerPosition.x + 16 , middleY - (int)playerPosition.y + tileSize);
-    	sprite.draw(middleX, middleY);
+    	currentMap.render(middleX - (int)player. position.x + 16 , middleY - (int)player.position.y + tileSize);
+    	player.render(container, g);
     	dude.render();
     	
     	twlInputAdapter.render();
     	
-    	if (buildMode)
+    	if (player.buildMode)
     	{
     	  Input input = container.getInput();	
-    	  int tileX = getTilePosition(-middleX + input.getMouseX() + playerPosition.x);
-    	  int tileY = getTilePosition(-middleY + input.getMouseY() + playerPosition.y) - 1;
-    	  int mouseX = tileX * tileSize - (int)playerPosition.x + middleX + tileSize / 2; 
-    	  int mouseY = tileY * tileSize - (int)playerPosition.y + middleY + tileSize; 
+    	  int tileX = getTilePosition(-middleX + input.getMouseX() + player.position.x);
+    	  int tileY = getTilePosition(-middleY + input.getMouseY() + player.position.y) - 1;
+    	  int mouseX = tileX * tileSize - (int)player.position.x + middleX + tileSize / 2; 
+    	  int mouseY = tileY * tileSize - (int)player.position.y + middleY + tileSize; 
     	  
           Image tile = null;
           

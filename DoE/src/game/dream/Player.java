@@ -1,26 +1,25 @@
 package game.dream;
 
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
-import org.newdawn.slick.Animation;
-import java.util.Random;
 
-public class npc {
-	
-Vector2f position;
-int currentDirection = 0;
-
-private Animation sprite, up, down, left, right;
-
-	public npc(Vector2f position)
+public class Player {
+	private Animation sprite, up, down, left, right;
+    public boolean buildMode = false;
+    public Vector2f position = new Vector2f(0f, 0f);
+    public Item[] inventory;
+    
+	public Player(Vector2f position)
 	{
 		this.position = position;
 		try {
-			Image [] movementUp = {new Image("data/pig_bk1.gif"), new Image("data/pig_bk2.gif")};
-			Image [] movementDown = {new Image("data/pig_fr1.gif"), new Image("data/pig_fr2.gif")};
+			Image [] movementUp = {new Image("data/knt1_bk1.gif"), new Image("data/knt1_bk2.gif")};
+			Image [] movementDown = {new Image("data/knt1_fr1.gif"), new Image("data/knt1_fr2.gif")};
 			Image [] movementLeft = {new Image("data/knt1_lf1.gif"), new Image("data/knt1_lf2.gif")};
 			Image [] movementRight = {new Image("data/knt1_rt1.gif"), new Image("data/knt1_rt2.gif")};
 			int [] duration = {300, 300};
@@ -35,22 +34,18 @@ private Animation sprite, up, down, left, right;
 		
     	sprite = down;
 	}
-	public void render(){
-		sprite.draw(DoE.screenWidth/2 - DoE.player.position.x + position.x,DoE.screenHeight/2 - DoE.player.position.y +  position.y);
-	}
-	public void update(int delta){
-		
-		int direction = 1;
-		Random random = new Random();
-		if(random.nextInt(1000) < 999)
-		{
-			direction = currentDirection;
-		}else{
-			direction = random.nextInt(4);
-		}
-		currentDirection = direction;
-		
-    	if (direction == 0)
+	public void init(GameContainer container) throws SlickException
+    {
+    	
+	inventory = new Item[2];
+	inventory[0] = new Item("Pants", new Image("data/knt1_lf1.gif"));
+	inventory[1] = new Item("Underpants", new Image("data/knt1_rt1.gif"));
+    }
+	
+	public void update(GameContainer container, int delta) throws SlickException
+    {
+		Input input = container.getInput();
+    	if (input.isKeyDown(Input.KEY_UP) ||input.isKeyDown(Input.KEY_W))
     	{
     		if (!DoE.mainGame.isBlocked(position.x, position.y - delta * 0.1f))
     		{
@@ -60,7 +55,7 @@ private Animation sprite, up, down, left, right;
 	    	    position.y -= delta * 0.1f;
     		}
     	}
-    	else if (direction == 1)
+    	else if (input.isKeyDown(Input.KEY_DOWN) ||input.isKeyDown(Input.KEY_S))
     	{
     		if (!DoE.mainGame.isBlocked(position.x, position.y + delta * 0.1f))
     		{
@@ -69,7 +64,7 @@ private Animation sprite, up, down, left, right;
 	    	    position.y += delta * 0.1f;
     		}
     	}
-    	else if (direction == 2)
+    	else if (input.isKeyDown(Input.KEY_LEFT) ||input.isKeyDown(Input.KEY_A))
     	{
     		if (!DoE.mainGame.isBlocked(position.x  - delta * 0.1f, position.y))
     		{
@@ -78,7 +73,7 @@ private Animation sprite, up, down, left, right;
 	    	    position.x -= delta * 0.1f;
     		}
     	}
-    	else if (direction == 3)
+    	else if (input.isKeyDown(Input.KEY_RIGHT) ||input.isKeyDown(Input.KEY_D))
     	{
     		if (!DoE.mainGame.isBlocked(position.x  + delta * 0.1f, position.y))
     		{
@@ -87,6 +82,20 @@ private Animation sprite, up, down, left, right;
 	    	    position.x += delta * 0.1f;
     		}
     	}
-		
-	}
+    	
+    	if (input.isKeyPressed(Input.KEY_B))
+    	{
+    		buildMode = !buildMode;
+    	}
+    	if (input.isKeyPressed(Input.KEY_I))
+    	{
+            for (int i=0;i<inventory.length;i++) {
+            	System.out.println(inventory[i].name);
+            }
+    	}
+    }
+	 public void render(GameContainer container, Graphics g) throws SlickException
+	    {
+	sprite.draw(DoE.screenWidth / 2, DoE.screenHeight / 2);
+	    }
 }
