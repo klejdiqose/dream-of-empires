@@ -18,9 +18,62 @@
    </properties>
   </tile>
  </tileset>
+ <tileset firstgid="49" name="Grass" tilewidth="32" tileheight="32">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="97" name="Grass" tilewidth="32" tileheight="32">
+  <tileoffset x="4" y="3"/>
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="145" name="Grass" tilewidth="32" tileheight="32">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="193" name="Desert" tilewidth="32" tileheight="32">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/tmw_desert_spacing.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="241" name="Grass" tilewidth="34" tileheight="34">
+  <tileoffset x="2" y="2"/>
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="276" name="Desert" tilewidth="32" tileheight="32">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/tmw_desert_spacing.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="324" name="Grass" tilewidth="32" tileheight="32" spacing="1">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="372" name="Grass" tilewidth="32" tileheight="32" spacing="2">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="407" name="Grass" tilewidth="32" tileheight="32" spacing="1">
+  <tileoffset x="1" y="1"/>
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="455" name="Grass" tilewidth="32" tileheight="32" spacing="1">
+  <tileoffset x="-1" y="-1"/>
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="503" name="Grass" tilewidth="32" tileheight="32" spacing="1">
+  <tileoffset x="-2" y="-2"/>
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="551" name="Grass" tilewidth="32" tileheight="32" spacing="1">
+  <tileoffset x="10" y="10"/>
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="599" name="Grass" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+  <tile id="31">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="647" name="Grass" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="../../../../../Program Files (x86)/Tiled/examples/Grass.png" width="265" height="199"/>
+ </tileset>
  <layer name="Ground" width="40" height="40">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+3ONQ7DABTA0JSZmZIy0/1PVw89Q/UreXiLJ6dJkqR/Ioc8CiiihDIqqAb4q6GOBppooY0OugH+euhjgCFGGGOCaYC/GeZYYInVt2dYB/jbYIsd9jjgiBPOAf4uuOKGOx544oV3gD9JkiRJkiRJ+qUP2wPe+QAZAAA=
+   H4sIAAAAAAAAC+3WyQnAMBADQJOa7Y5SqD9pwEeCiOcxf4lFsPUqpcKjBWRIzqM77HUHZBixuku7BgDgT/y3GZLvMJMtuQ984c0NnLivDiRZbbsAGQAA
   </data>
  </layer>
 </map>
