@@ -6,13 +6,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Player {
 	private Animation sprite, up, down, left, right;
     public boolean buildMode = false;
     public Vector2f position = new Vector2f(0f, 0f);
-    public Item[] inventory;
+    public Item[] inventory = new Item[50];
     
 	public Player(Vector2f position)
 	{
@@ -37,9 +38,9 @@ public class Player {
 	public void init(GameContainer container) throws SlickException
     {
     	
-	inventory = new Item[2];
-	inventory[0] = new Item("Pants", new Image("data/knt1_lf1.gif"));
-	inventory[1] = new Item("Underpants", new Image("data/knt1_rt1.gif"));
+	
+	inventory[0] = new Item("Pants", DoE.inventoryItem[0]);
+	inventory[1] = new Item("Underpants", DoE.inventoryItem[3]);
     }
 	
 	public void update(GameContainer container, int delta) throws SlickException
@@ -82,16 +83,29 @@ public class Player {
 	    	    position.x += delta * 0.1f;
     		}
     	}
-    	
+    	    	
     	if (input.isKeyPressed(Input.KEY_B))
     	{
     		buildMode = !buildMode;
     	}
     	if (input.isKeyPressed(Input.KEY_I))
     	{
-            for (int i=0;i<inventory.length;i++) {
-            	System.out.println(inventory[i].name);
-            }
+    		if (DoE.gui.getRootPane() == DoE.inventoryMenu)
+    		{ DoE.gui.setRootPane(DoE.root);
+    			
+    		}
+    		else {
+	            for (int i=0;i<DoE.inventoryItems;i++) {
+	
+	            	if(inventory[i] == null)
+	            	{
+	            		DoE.inventoryPanel.setSlot(i,null);
+	            	} else {
+	            		DoE.inventoryPanel.setSlot(i,inventory[i]);
+	            	}
+	            }
+	        	DoE.gui.setRootPane(DoE.inventoryMenu);
+    			}
     	}
     }
 	 public void render(GameContainer container, Graphics g) throws SlickException

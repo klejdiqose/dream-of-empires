@@ -35,14 +35,19 @@ public class DoE extends BasicGame implements ComponentListener
 	private static final int tileSize = 32;
 	public static final int screenHeight = 600;
 	public static final int screenWidth = 800;
+	public static int inventoryItems = 4;
+	public static Image[] inventoryItem = new Image[inventoryItems];
 	private TWLInputAdapter twlInputAdapter;
     private LWJGLRenderer lwjglRenderer;
     private ThemeManager theme;
     public static GUI gui;
     public static Widget root;
     public static GameMenu gameMenu;
+    public static ResizableFrame inventoryMenu;
+    public static InventoryPanel inventoryPanel;
     public static DoE mainGame;
     public static Player player;
+    public static int inventorySlots = 50;
     private final int buildButtons = 2;
     private MouseOverArea[] buildButton = new MouseOverArea[buildButtons];
     private int buildItem = 0;
@@ -78,7 +83,14 @@ public class DoE extends BasicGame implements ComponentListener
     	dude = new npc(new Vector2f(5f, 5f));        
     	player = new Player(new Vector2f(0f, 0f));        
     	currentMap = new TiledMap("data/desert.tmx");
-    	
+    	// define inventory icons
+        inventoryItem[0] = new Image ("data/knt1_rt1.gif");
+        inventoryItem[1] = new Image ("data/knt1_rt2.gif");
+        inventoryItem[2] = new Image ("data/knt1_lf1.gif");
+        inventoryItem[3] = new Image ("data/knt1_lf2.gif");
+    	player.init(container);
+        
+        
     	calculateBlocked();
     	
     	  // add build buttons
@@ -106,6 +118,14 @@ public class DoE extends BasicGame implements ComponentListener
         root = new Widget();
         root.setSize(screenWidth, screenHeight);
         root.setTheme("");
+        
+        inventoryMenu = new ResizableFrame();
+        inventoryMenu.setSize(screenWidth, screenHeight);
+        inventoryMenu.setTitle("inventory");
+        inventoryMenu.setResizableAxis(ResizableFrame.ResizableAxis.NONE);
+        inventoryPanel = new InventoryPanel (10, 5);
+        inventoryMenu.add(inventoryPanel);
+        inventoryMenu.setTheme("");
 
         // create the popup menu
 		gameMenu = new GameMenu();
